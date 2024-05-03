@@ -2,13 +2,15 @@ import logging
 
 import pytest
 
+from internal.client import SomeClient
+
 
 def pytest_addoption(parser):
     parser.addoption(
         "--logs",
         action="store",
-        default="true",
-        help="enter logs",
+        default="True",
+        help="Enable logs logs",
     )
 
 
@@ -23,8 +25,27 @@ def logger(request):
     return logger
 
 
+@pytest.fixture
+def client(request):
+    return SomeClient("", "")
+
+
+@pytest.fixture
+def client_2(request, user, password):
+    return SomeClient(user, password)
+
+
+
+
+@pytest.fixture
+def clientParametrized(request):
+    def wrapper(*args,**kwargs):
+        return SomeClient(args,kwargs)
+    return wrapper
+
+
 @pytest.fixture(autouse=True, scope="session")
-def test_logger(request, logger):
+def test_logger(logger):
     logger.info("\nНачало тестовой сессии")
     yield
     logger.info("Конец тестовой сессии \n")
