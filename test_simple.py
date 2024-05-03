@@ -12,11 +12,11 @@ import pytest
 
     ],
 )
-def test_get_positive(client, userName, statusCode, expectedResult):
+def test_get_positive(client_non_auth, userName, statusCode, expectedResult):
     """
     Позитивный тест на получение юзера. С параметризацией через @pytest.mark.parametrize
     """
-    res = client.get_user(userName)
+    res = client_non_auth.get_user(userName)
     assert res.status_code == statusCode
     assert res.json() == expectedResult
     # по желанию проверка хедеров и кук
@@ -36,11 +36,11 @@ def test_get_positive(client, userName, statusCode, expectedResult):
 
     ],
 )
-def test_get_negative(client, userName, statusCode, expectedError):
+def test_get_negative(client_non_auth, userName, statusCode, expectedError):
     """
     Негативный тест на получение юзера. С параметризацией через @pytest.mark.parametrize
     """
-    res = client.get_user(userName)
+    res = client_non_auth.get_user(userName)
     assert res.status_code == statusCode
     assert expectedError in res.json()['message']
     # по желанию проверка хедеров и кук
@@ -60,21 +60,22 @@ def test_get_positive_with_param_fixture(clientParametrized):
     # по желанию проверка хедеров и кук
 
 
-@pytest.mark.parametrize(
-    "user,password", ["theUser", "221052"])
-def test_get_positive_with_implicit_param_fixture(clientParametrized,user,password):
+@pytest.mark.parametrize( "user,password",[ ("some","some_pass") ] )
+def test_get_positive_with_implicit_param_fixture(client_with_implicit_auth,user,password):
     """
     Пример параметризации через параметризованную фикстуру clientParametrized с неявной передачей.
     В чем соль - фикстура clientParametrized ожидает 2 фикстуры на вход user, password . Но они не существуют. Они будут создаваться
     в процессе выполнения
     """
-    cl = clientParametrized("theUser", "221052")
+    cl = client_with_implicit_auth
     res = cl.get_user("theUser")
     assert res.status_code == 200
     assert res.json() == {'id': 10, 'username': 'theUser', 'firstName': 'John',
                              'lastName': "James' and 1 = if(5=5, sleep(2), 0) and '1'='1", 'email': 'john@email.com',
                              'password': '12345', 'phone': '12345', 'userStatus': 1}
-    # по желанию проверка хедеров и кук
+
+
+
 
 
 

@@ -26,12 +26,12 @@ def logger(request):
 
 
 @pytest.fixture
-def client(request):
+def client_non_auth(request):
     return SomeClient("", "")
 
 
 @pytest.fixture
-def client_2(request, user, password):
+def client_with_implicit_auth(request, user, password):
     return SomeClient(user, password)
 
 
